@@ -42,9 +42,15 @@ def GenerateObj(item, userid, count, datetime_):
                 _dict["others"] = " ".join(item[5:len(item)])
             except:
                 print(str(count) + "_".join(item) + " no item[5]")
+            try:
+                if (not _dict["price"][0].isdigit()):
+                    _dict["others"]=_dict["price"]+_dict["others"]
+                    _dict["price"]=""
+            except:
+                print(str(count) + "_".join(item) + " no price")
         _dict["user_id"] = userid
         _dict["datetime"] = str(datetime_)
-
+        _dict["origin"] = "|".join(_dict.values())
     return _dict
 
 
@@ -98,6 +104,12 @@ def GetDataAndNormalize(url):
                         item.append(item[3])
                         item[3] = ""
                     elif (not item[4][0].isdigit()):
+                        item[5], item[4] = item[4], item[5]
+            except:
+                pass
+            try:
+                if (not item[4][0].isdigit() and not item[5][0].isdigit()):
+                    if (item[5] == "" and item[4] != ""):
                         item[5], item[4] = item[4], item[5]
             except:
                 pass
