@@ -27,12 +27,11 @@ for i in range(
     msg_price = item["price"]
     msg_datetime = item["datetime"]
     msg = f"[{msg_sell_or_collect}]{msg_name}"
-    if msg_price != "":
+    if msg_price != "" and not msg_price[0].isdigit():
         msg += f" - NT${msg_price}"
-    msg += f" ({msg_datetime})"
     msg = urllib.parse.quote(msg)
 
-    query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
+    query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A{msg}%0D%0A({msg_datetime})" https://notify-api.line.me/api/notify'
     os.system(query)
 
 crawler.WtiteJson(json_data)
