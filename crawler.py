@@ -44,8 +44,8 @@ def GenerateObj(item, userid, count, datetime_):
                 print(str(count) + "_".join(item) + " no item[5]")
             try:
                 if (not _dict["price"][0].isdigit()):
-                    _dict["others"]=_dict["price"]+_dict["others"]
-                    _dict["price"]=""
+                    _dict["others"] = _dict["price"] + _dict["others"]
+                    _dict["price"] = ""
             except:
                 print(str(count) + "_".join(item) + " no price")
         _dict["user_id"] = userid
@@ -120,6 +120,16 @@ def GetDataAndNormalize(url):
             except:
                 pass
             try:
+                if (item[4][0].isdigit()):
+                    list_k = item[4].split('k')
+                    if len(list_k) > 1:
+                        item[4] = str(int(float(list_k[0]) * 1000)) + list_k[1]
+                    list_K = item[4].split('K')
+                    if len(list_K) > 1:
+                        item[4] = str(int(float(list_K[0]) * 1000)) + list_K[1]
+            except:
+                pass
+            try:
                 if (item[4][-1].lower() == 'k'):
                     item[4] = str(int(float(item[4][0:-1]) * 1000))
             except:
@@ -130,7 +140,7 @@ def GetDataAndNormalize(url):
         else:
             _str = push_content[i].text.replace(": ", "").strip().split("_")
             _dict = dict_data[str(count_data)]
-            if (not _dict.get("price")):
+            if not _dict.get("price"):
                 _dict["name"] += _str[0]
                 if (len(_str) > 1):
                     _dict["price"] = _str[1]
@@ -138,13 +148,20 @@ def GetDataAndNormalize(url):
                         _dict["price"] = str(
                             int(float(_dict["price"][0:-1]) * 1000))
                 if (len(_str) > 2):
-                    _dict["others"] = _str[2]
-            elif (_dict.get("others")):
-                _dict["others"] += push_content[i].text.replace(": ",
-                                                                "").strip()
-            else:
-                _dict["others"] = push_content[i].text.replace(": ",
-                                                               "").strip()
+                    _dict["others"] = " ".join(_str[2:len(_str)])
+            elif _dict.get("price"):
+                isDigitEach = True
+                for c in _str[0]:
+                    if not c.isdigit():
+                        isDigitEach = False
+                if isDigitEach:
+                    _dict["price"] += _str[0]
+                else:
+                    __str = " ".join(_str)
+                    if _dict.get("others"):
+                        _dict["others"] += __str
+                    else:
+                        _dict["others"] = __str
     dict_data["LAST_UPDATED_DATETIME"] = str(last_update)
     dict_data["LAST_UPDATED_ID"] = str(count_data)
     return dict_data

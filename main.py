@@ -27,7 +27,7 @@ for i in range(
     msg_price = item["price"]
     msg_datetime = item["datetime"]
     msg = f"[{msg_sell_or_collect}]{msg_name}"
-    if msg_price != "" and not msg_price[0].isdigit():
+    if msg_price != "":
         msg += f" - NT${msg_price}"
     msg = urllib.parse.quote(msg)
 
