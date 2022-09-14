@@ -4,7 +4,7 @@ import datetime
 import json
 
 
-def CrawlFindAll(url, dom, class_list):
+def CrawlerFindAll(url, dom, class_list):
     my_headers = {'cookie': 'over18=1;'}
     response = requests.get(url, headers=my_headers)
     response.encoding = "utf-8"
@@ -54,19 +54,50 @@ def GenerateObj(item, userid, count, datetime_):
     return _dict
 
 
-def GetDataAndNormalize(url):
+def GetData(url):
     class_ = ["push-content", "push-ipdatetime", "push-userid"]
-    push_content, push_ipdatetime, push_userid = CrawlFindAll(
+    push_content, push_ipdatetime, push_userid = CrawlerFindAll(
         url, "span", class_)
 
     count_data = 0
-    last_update = datetime.datetime.today()
+    last_update_datetime = datetime.datetime.today()
     dict_data = {}
     dict_data["LAST_UPDATED_ID"] = 0
-    dict_data["LAST_UPDATED_DATETIME"] = last_update
+    dict_data["LAST_UPDATED_DATETIME"] = last_update_datetime
 
     for i in range(len(push_content)):
-        item = push_content[i].text.replace(": ", "").strip().split("_")
+        _item = push_content[i].text.replace(": ", "").strip()
+        intput_date = push_ipdatetime[i].text.replace("\n", "_").replace(
+            ":", "_").replace("/", "_").replace(" ", "_").split("_")
+        push_datetime = datetime.datetime(year=datetime.date.today().year,
+                                          month=int(intput_date[1]),
+                                          day=int(intput_date[2]),
+                                          hour=int(intput_date[3]),
+                                          minute=int(intput_date[4]))
+        last_update_datetime = push_datetime
+
+        if (_item[0] in ("賣", "售", "徵", "買")):
+            # if (not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
+            #          or "皆可" in item[2] or "不限" in item[2])):
+            #     item.insert(2, "")
+            count_data += 1
+            # dict_data[str(count_data)] = GenerateObj(item, push_userid[i].text,
+            #                                          count_data, push_datetime)
+            dict_data[str(count_data)] = {}
+            dict_data[str(count_data)]["origin"] = _item
+        else:
+            _s = push_content[i].text.replace(": ", "").strip()
+            dict_data[str(count_data)]["origin"] += _s
+    dict_data["LAST_UPDATED_DATETIME"] = str(last_update_datetime)
+    dict_data["LAST_UPDATED_ID"] = str(count_data)
+
+    return dict_data
+
+
+def Normalize():
+    for i in range(len(push_content)):
+        _item = push_content[i].text.replace(": ", "").strip()
+        item = _item.split("_")
         intput_date = push_ipdatetime[i].text.replace("\n", "_").replace(
             ":", "_").replace("/", "_").replace(" ", "_").split("_")
         date = datetime.datetime(year=datetime.date.today().year,
@@ -78,9 +109,9 @@ def GetDataAndNormalize(url):
         if (item[0] in ("賣", "售", "徵", "買")):
             if (not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
                      or "皆可" in item[2] or "不限" in item[2])):
-                item.insert(2, "闕漏")
-            if (len(item[1]) > 2):
-                item[1] = item[1][0] + item[1][1]
+                item.insert(2, "")
+            # if (len(item[1]) > 2):
+            # item[1] = item[1][0] + item[1][1]
             try:
                 if (not item[4][0].isdigit() and len(item) > 5):
                     item[3] += " " + item[4]
@@ -113,6 +144,7 @@ def GetDataAndNormalize(url):
                         item[5], item[4] = item[4], item[5]
             except:
                 pass
+            # TODO
             try:
                 if (not item[4][0].isdigit() and not item[5][0].isdigit()):
                     if (item[5] == "" and item[4] != ""):
@@ -137,8 +169,10 @@ def GetDataAndNormalize(url):
             count_data += 1
             dict_data[str(count_data)] = GenerateObj(item, push_userid[i].text,
                                                      count_data, date)
+            dict_data[str(count_data)]["origin"] = _item
         else:
-            _str = push_content[i].text.replace(": ", "").strip().split("_")
+            _s = push_content[i].text.replace(": ", "").strip()
+            _str = _s.split("_")
             _dict = dict_data[str(count_data)]
             if not _dict.get("price"):
                 _dict["name"] += _str[0]
@@ -162,6 +196,7 @@ def GetDataAndNormalize(url):
                         _dict["others"] += __str
                     else:
                         _dict["others"] = __str
+            dict_data[str(count_data)]["origin"] += _s
     dict_data["LAST_UPDATED_DATETIME"] = str(last_update)
     dict_data["LAST_UPDATED_ID"] = str(count_data)
     return dict_data
