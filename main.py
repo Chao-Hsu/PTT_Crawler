@@ -3,8 +3,8 @@ import os
 import urllib.parse
 import datetime
 
-line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
-# line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
+# line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
+line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
 
 now = tonow = datetime.datetime.now()
 if (now.day == 1 and now.hour == 0 and now.minute < 5):
@@ -34,4 +34,4 @@ for i in range(
     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A{msg}%0D%0A({msg_datetime})" https://notify-api.line.me/api/notify'
     os.system(query)
 
-crawler.WtiteJson(json_data)
+# crawler.WtiteJson(json_data)
