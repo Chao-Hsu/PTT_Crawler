@@ -7,6 +7,8 @@ from fake_useragent import UserAgent
 import random
 import time
 
+isPrintError = False
+
 
 def DoSomeDelay():
     delay_choices = [1, 3, 5, 14, 25, 40]
@@ -148,6 +150,13 @@ def ReplaceK(k, obj):
     return obj
 
 
+def ErrorMessage(error, obj):
+    if isPrintError:
+        print(error + " fail")
+        print("|".join(obj.values()))
+        print()
+
+
 def Normalize(my_data):
     print("Normalizing...")
     normalize_data = copy.deepcopy(my_data)
@@ -166,9 +175,8 @@ def Normalize(my_data):
                         or "皆可" in item[2] or "不限" in item[2]):
                     item.insert(2, "")
             except:
-                print("condition error")
-                print(normalize_data[str(index)]["origin"])
-                print()
+                ErrorMessage("condition", normalize_data[str(index)])
+
             # 0    1   2    3   4    5   6
             # 賣徵_地點_狀況_品名_其它_價錢_其它    7
             # 0    1   2    3   4    5   6    7
@@ -189,9 +197,7 @@ def Normalize(my_data):
                     for i in range(len(item) - others_index):
                         item.pop(-1)
             except:
-                print("rearrange fail")
-                print(normalize_data[str(index)]["origin"])
-                print()
+                ErrorMessage("rearrange", normalize_data[str(index)])
 
             _dict = normalize_data[str(index)]
 
@@ -204,19 +210,13 @@ def Normalize(my_data):
                 try:
                     _dict["price"] = item[4].strip()
                 except:
-                    print("price fail")
-                    print(normalize_data[str(index)]["origin"])
-                    print()
+                    ErrorMessage("price", normalize_data[str(index)])
                 try:
                     _dict["others"] = item[5].strip()
                 except:
-                    print("others fail")
-                    print(normalize_data[str(index)]["origin"])
-                    print()
+                    ErrorMessage("others", normalize_data[str(index)])
             except:
-                print("obj fail")
-                print(normalize_data[str(index)]["origin"])
-                print()
+                ErrorMessage("obj", normalize_data[str(index)])
 
             try:
                 # 0    1   2    3   4    5
@@ -224,13 +224,9 @@ def Normalize(my_data):
                 if not isPrice(_dict["price"]):
                     _dict["price"], _dict["others"] = _dict["others"], _dict[
                         "price"]
-                    print()
-                    print(normalize_data[str(index)], "!!!!!!!!!")
-                    print()
             except:
-                print("swap price and others fail")
-                print(normalize_data[str(index)]["origin"])
-                print()
+                ErrorMessage("swap price and others",
+                             normalize_data[str(index)])
 
             try:
                 _dict["price"] = ReplaceK('K', ReplaceK('k', _dict["price"]))
@@ -238,9 +234,9 @@ def Normalize(my_data):
                 print("ReplaceK fail")
         except:
             print()
-            print(f"!!!")
-            print(f"{index} fatal error")
-            print(f"!!!")
+            print(f"!!!!!")
+            ErrorMessage("fatal error", normalize_data[str(index)])
+            print(f"!!!!!")
             print()
 
     print("Done")
