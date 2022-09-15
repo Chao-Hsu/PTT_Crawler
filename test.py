@@ -15,7 +15,8 @@ line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
 #     msg = f"{str(now.month)}月置底推文交易"
 #     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
 
-url = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
+url_title = "https://www.ptt.cc/bbs/Headphone/index.html"
+url_push = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
 
 def SendLineMessage(msg):
@@ -35,8 +36,18 @@ def SendItemMessage(my_data, normalized_data):
         msg_datetime = item["datetime"]
         msg = f"[{msg_sell_or_collect}]{msg_name}"
         if msg_price != "":
-            msg += f" - {msg_price}"
+            msg += f" - NT${msg_price}"
         msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
+        SendLineMessage(msg)
+
+
+def SendTitleMessage(my_data, new_data_id_list):
+    for _id in new_data_id_list:
+        item = my_data[_id]
+        msg_title = urllib.parse.quote(item["title"])
+        msg_url = urllib.parse.quote(item["url"])
+        msg_date = urllib.parse.quote(item["date"])
+        msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
         SendLineMessage(msg)
 
 
@@ -44,10 +55,23 @@ def main(argv):
     if (len(argv) > 1 and argv[1] == '--delay'):
         crawler.DoSomeDelay()
 
-    crawl_push_data = crawler.GetPushData(url)
+    # title
+    crawl_title_data, new_data_id_list = crawler.GetTitleData(url_title)
+    my_title_data = crawler.ReadJson("data_title")
+    checked_title_data = crawler.CheckData(my_title_data, crawl_title_data)
+
+    SendTitleMessage(checked_title_data, new_data_id_list)
+
+    crawler.WtiteJson(checked_title_data, "data_title")
+
+    # push
+    crawl_push_data = crawler.GetPushData(url_push)
     normalized_push_data = crawler.Normalize(crawl_push_data)
     my_push_data = crawler.ReadJson("data_push")
+
     SendItemMessage(my_push_data, normalized_push_data)
+
+    crawler.WtiteJson(normalized_push_data, "data_push")
 
     # TODO:檢查ID變小
     # if id變小:
@@ -56,8 +80,6 @@ def main(argv):
     #     crawler.WtiteJson(my_data,"年+上個月")
     # else:
     #     crawler.WtiteJson(crawl_data,"data.json")
-
-    crawler.WtiteJson(normalized_push_data, "data_push")
 
 
 if __name__ == '__main__':

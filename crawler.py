@@ -38,8 +38,57 @@ def CrawlerFindAll(url, dom, class_list):
     return result_list
 
 
+def GetTitleData(url):
+    print("Getting title data...")
+    class_ = ["title", "author", "date"]
+    title, author, date = CrawlerFindAll(url, "div", class_)
+    print("Done")
+
+    dict_data = {}
+    new_data = []
+
+    print("Go through data...")
+    for index in range(len(title)):
+        try:
+            title_string = title[index].find('a').string
+            title_href = title[index].find('a')['href']
+            if '[交易]' in title_string or '贈送' in title_string:
+                try:
+                    if '[交易]' in title_string:
+                        title_index = title_string.index('[交易]') + 4
+                        _title = title_string[title_index:].strip()
+                    else:
+                        _title = title_string.strip()
+                except:
+                    pass
+                try:
+                    input_date = date[index].string.strip().split('/')
+                    title_date = f"{datetime.datetime.today().year}-{input_date[0]}-{input_date[1]}"
+                except:
+                    pass
+                try:
+                    _id = title_href.strip().split('/')[-1].replace(
+                        '.html', '')
+                    if not dict_data.get(_id):
+                        new_data.append(_id)
+                        dict_data[_id] = {
+                            "title": _title,
+                            "url": "https://www.ptt.cc" + title_href,
+                            "used_id": author[index].string,
+                            "date": title_date,
+                            "origin": title_string
+                        }
+                except:
+                    pass
+        except:
+            pass
+
+    print("Done")
+    return dict_data, new_data
+
+
 def GetPushData(url):
-    print("Getting data...")
+    print("Getting push data...")
     class_ = ["push-content", "push-ipdatetime", "push-userid"]
     push_content, push_ipdatetime, push_userid = CrawlerFindAll(
         url, "span", class_)
@@ -203,12 +252,21 @@ def Normalize(my_data):
     return normalize_data
 
 
+def CheckData(old_data, new_data):
+    checked_data = copy.deepcopy(old_data)
+    for _id in new_data.keys():
+        if checked_data.get(_id) == None:
+            checked_data[_id] = new_data[_id]
+
+    return checked_data
+
+
 def WtiteJson(my_data, filename):
     json_data = open(f"./{filename}.json", 'w', encoding='utf-8')
     json.dump(my_data, json_data, ensure_ascii=False)
     json_data.close()
 
 
-def ReadJson():
-    with open('data.json', 'r', encoding='utf-8') as f:
+def ReadJson(filename):
+    with open(f'{filename}.json', 'r', encoding='utf-8') as f:
         return json.load(f)
