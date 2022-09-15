@@ -8,7 +8,7 @@ import datetime
 #test
 line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
 
-#TODO:改成id變小的時候
+# TODO:改成id變小的時候
 # now = tonow = datetime.datetime.now()
 # if (now.day == 1 and now.hour == 0 and now.minute < 5):
 #     msg = f"{str(now.month)}月置底推文交易"
@@ -17,24 +17,34 @@ line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
 url = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
 crawl_data = crawler.GetData(url)
+normalized_data = crawler.Normalize(crawl_data)
+print(normalized_data)
 
-# my_data = crawler.ReadJson()
+my_data = crawler.ReadJson()
 
-# for i in range(
-#         int(my_data["LAST_UPDATED_ID"]) + 1,
-#         int(crawl_data["LAST_UPDATED_ID"]) + 1):
+for i in range(
+        int(my_data["LAST_UPDATED_ID"]) + 1,
+        int(normalized_data["LAST_UPDATED_ID"]) + 1):
 
-#     item = crawl_data[str(i)]
-#     msg_sell_or_collect = item["sell_or_collect"]
-#     msg_name = item["name"]
-#     msg_price = item["price"]
-#     msg_datetime = item["datetime"]
-#     msg = f"[{msg_sell_or_collect}]{msg_name}"
-#     if msg_price != "":
-#         msg += f" - NT${msg_price}"
-#     msg = urllib.parse.quote(msg)
+    item = normalized_data[str(i)]
+    msg_sell_or_collect = item["sell_or_collect"]
+    msg_name = item["name"]
+    msg_price = item["price"]
+    msg_datetime = item["datetime"]
+    msg = f"[{msg_sell_or_collect}]{msg_name}"
+    if msg_price != "":
+        msg += f" - NT${msg_price}"
+    msg = urllib.parse.quote(msg)
 
-#     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A{msg}%0D%0A({msg_datetime})" https://notify-api.line.me/api/notify'
+    query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A{msg}%0D%0A({msg_datetime})" https://notify-api.line.me/api/notify'
+    os.system(query)
+
+# TODO:檢查ID變小
+# if id變小:
+#     query=f''
 #     os.system(query)
+#     crawler.WtiteJson(my_data,"年+上個月")
+# else:
+#     crawler.WtiteJson(crawl_data,"data.json")
 
-crawler.WtiteJson(crawl_data)
+crawler.WtiteJson(normalized_data, "data")
