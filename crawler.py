@@ -127,7 +127,7 @@ def GetData(url):
 
 
 def isPrice(obj):
-    if "k" in obj or "K" in obj or '元' in obj or '內' in obj or '00' in obj or obj[
+    if "k" in obj or "K" in obj or '元' in obj or '00' in obj or '50' in obj or obj[
             -1] == '0':
         return True
     else:
@@ -174,18 +174,18 @@ def Normalize(my_data):
             # 0    1   2    3   4    5   6    7
             # 賣徵_地點_狀況_品名_品名_價錢_其它_其它   8
             try:
-                if (not item[4][0].isdigit() and len(item) > 5):
+                if (not isPrice(item[4]) and len(item) > 5):
                     item[3] += " " + item[4]
                     others_index = 6
                     for i in range(5, len(item)):
                         # to recognize price
-                        if isPrice(item[i][-1]):
+                        if isPrice(item[i]):
                             item[4] = item[i]
                             others_index = i + 1
                             break
                         else:
                             item[3] += " " + item[i]
-                    item[5] = " ".join(item[others_index:len(item) + 1])
+                    item[5] = " ".join(item[others_index:len(item)])
                     for i in range(len(item) - others_index):
                         item.pop(-1)
             except:
@@ -195,6 +195,7 @@ def Normalize(my_data):
 
             _dict = normalize_data[str(index)]
 
+            # generate obj
             try:
                 _dict["sell_or_collect"] = item[0].strip()
                 _dict["location"] = item[1].strip()
@@ -212,7 +213,6 @@ def Normalize(my_data):
                     print("others fail")
                     print(normalize_data[str(index)]["origin"])
                     print()
-
             except:
                 print("obj fail")
                 print(normalize_data[str(index)]["origin"])
