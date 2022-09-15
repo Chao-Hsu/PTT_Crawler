@@ -5,9 +5,10 @@ import datetime
 import sys
 
 #prod
-# line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
+# line_notify_token = "8drpZinsFqBppybCSdzT8Nd4vcfXimIChGA7UWdZike"   #Akira Ptt Crawler
+# line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp" #PttHeadphoneCrawler
 #test
-line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
+line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU" #Akira Ptt Crawler to person
 
 # TODO:改成id變小的時候
 # now = tonow = datetime.datetime.now()
@@ -56,8 +57,9 @@ def main(argv):
         crawler.DoSomeDelay()
 
     # title
-    crawl_title_data, new_data_id_list = crawler.GetTitleData(url_title)
     my_title_data = crawler.ReadJson("data_title")
+    crawl_title_data, new_data_id_list = crawler.GetTitleData(
+        url_title, my_title_data)
     checked_title_data = crawler.CheckData(my_title_data, crawl_title_data)
 
     SendTitleMessage(checked_title_data, new_data_id_list)

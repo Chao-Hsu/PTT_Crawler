@@ -38,7 +38,7 @@ def CrawlerFindAll(url, dom, class_list):
     return result_list
 
 
-def GetTitleData(url):
+def GetTitleData(url, old_data):
     print("Getting title data...")
     class_ = ["title", "author", "date"]
     title, author, date = CrawlerFindAll(url, "div", class_)
@@ -69,7 +69,7 @@ def GetTitleData(url):
                 try:
                     _id = title_href.strip().split('/')[-1].replace(
                         '.html', '')
-                    if not dict_data.get(_id):
+                    if not old_data.get(_id):
                         new_data.append(_id)
                         dict_data[_id] = {
                             "title": _title,

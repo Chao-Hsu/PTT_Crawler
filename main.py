@@ -57,8 +57,9 @@ def main(argv):
         crawler.DoSomeDelay()
 
     # title
-    crawl_title_data, new_data_id_list = crawler.GetTitleData(url_title)
     my_title_data = crawler.ReadJson("data_title")
+    crawl_title_data, new_data_id_list = crawler.GetTitleData(
+        url_title, my_title_data)
     checked_title_data = crawler.CheckData(my_title_data, crawl_title_data)
 
     SendTitleMessage(checked_title_data, new_data_id_list)
