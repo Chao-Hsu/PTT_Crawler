@@ -13,12 +13,11 @@ isPrintError = False
 def DoSomeDelay():
     delay_choices = [1, 3, 5, 14, 25, 40]
     delay = random.choice(delay_choices)
+    print(f"delay for {delay} seconds")
     time.sleep(delay)
 
 
 def CrawlerFindAll(url, dom, class_list):
-    DoSomeDelay()
-
     user_agent = UserAgent()
     my_headers = {
         "cookie":
@@ -37,44 +36,6 @@ def CrawlerFindAll(url, dom, class_list):
     for i in class_list:
         result_list.append(soup.find_all(dom, i))
     return result_list
-
-
-def GenerateObj(item, userid, count, datetime_):
-    _dict = {}
-    if (len(item) > 1):
-        _dict["sell_or_collect"] = item[0].strip()
-        _dict["location"] = item[1].strip()
-        _dict["condition"] = item[2].strip()
-        _dict["name"] = item[3].strip()
-        _dict["price"] = ""
-        _dict["others"] = ""
-        if (_dict["sell_or_collect"] in ("徵", "買")):
-            try:
-                if (item[4][0].isdigit()):
-                    _dict["price"] = item[4].strip()
-                else:
-                    _dict["others"] = item[4].strip()
-            except:
-                print(str(count) + "_".join(item) + " no item[4]")
-        else:
-            try:
-                _dict["price"] = item[4].strip()
-            except:
-                print(str(count) + "_".join(item) + " no item[4]")
-            try:
-                _dict["others"] = " ".join(item[5:len(item)])
-            except:
-                print(str(count) + "_".join(item) + " no item[5]")
-            try:
-                if (not _dict["price"][0].isdigit()):
-                    _dict["others"] = _dict["price"] + _dict["others"]
-                    _dict["price"] = ""
-            except:
-                print(str(count) + "_".join(item) + " no price")
-        _dict["user_id"] = userid
-        _dict["datetime"] = str(datetime_)
-        _dict["origin"] = "|".join(_dict.values())
-    return _dict
 
 
 def GetData(url):
@@ -103,9 +64,6 @@ def GetData(url):
         last_update_datetime = push_datetime
 
         if (_item[0] in ("賣", "售", "徵", "買")):
-            # if (not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
-            #          or "皆可" in item[2] or "不限" in item[2])):
-            #     item.insert(2, "")
             count_data += 1
             dict_data[str(count_data)] = {
                 "sell_or_collect": "",
@@ -114,17 +72,17 @@ def GetData(url):
                 "name": "",
                 "price": "",
                 "others": "",
+                "used_id": push_userid[i].text.replace(": ", "").strip(),
                 "datetime": str(push_datetime),
                 "origin": _item
             }
-            # dict_data[str(count_data)]["origin"] = _item
         else:
             _s = push_content[i].text.replace(": ", "").strip()
             dict_data[str(count_data)]["origin"] += _s
-    dict_data["LAST_UPDATED_DATETIME"] = str(last_update_datetime)
     dict_data["LAST_UPDATED_ID"] = str(count_data)
-    print("Done")
+    dict_data["LAST_UPDATED_DATETIME"] = str(last_update_datetime)
 
+    print("Done")
     return dict_data
 
 
@@ -136,17 +94,18 @@ def isPrice(obj):
         return False
 
 
-def ReplaceK(k, obj):
-    if k in obj:
-        if '0.' in obj:
-            obj = obj.replace('0.', '')
-            obj = obj.replace(k, "00")
-        elif '.5k' in obj:
-            obj = obj.replace('.5k', '500')
-        else:
-            obj = obj.replace(k, "000")
-            if '.' in obj:
-                obj = obj.replace('.', '')
+def ReplaceK(obj, k_list):
+    for k in k_list:
+        if k in obj:
+            if '0.' in obj:
+                obj = obj.replace('0.', '')
+                obj = obj.replace(k, "00")
+            elif '.5k' in obj:
+                obj = obj.replace('.5k', '500')
+            else:
+                obj = obj.replace(k, "000")
+                if '.' in obj:
+                    obj = obj.replace('.', '')
     return obj
 
 
@@ -229,9 +188,10 @@ def Normalize(my_data):
                              normalize_data[str(index)])
 
             try:
-                _dict["price"] = ReplaceK('K', ReplaceK('k', _dict["price"]))
+                k_list = ['k', 'K']
+                _dict["price"] = ReplaceK(_dict["price"], k_list)
             except:
-                print("ReplaceK fail")
+                ErrorMessage("ReplaceK", normalize_data[str(index)])
         except:
             print()
             print(f"!!!!!")
