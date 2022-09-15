@@ -136,9 +136,13 @@ def isPrice(obj):
 
 def ReplaceK(k, obj):
     if k in obj:
-        obj = obj.replace(k, "000")
-        if '.' in obj:
-            obj = obj.replace('.', '')
+        if '0.' in obj:
+            obj = obj.replace('0.', '')
+            obj = obj.replace(k, "00")
+        else:
+            obj = obj.replace(k, "000")
+            if '.' in obj:
+                obj = obj.replace('.', '')
     return obj
 
 
