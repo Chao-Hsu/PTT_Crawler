@@ -127,7 +127,7 @@ def GetData(url):
 
 
 def isPrice(obj):
-    if 'k' in obj or 'K' in obj or '元' in obj or '內' in obj or '00' in obj or obj[
+    if "k" in obj or "K" in obj or '元' in obj or '內' in obj or '00' in obj or obj[
             -1] == '0':
         return True
     else:
@@ -172,8 +172,9 @@ def Normalize(my_data):
             except:
                 print(f"err {index}")
 
+            _dict = normalize_data[str(index)]
+
             try:
-                _dict = normalize_data[str(index)]
                 _dict["sell_or_collect"] = item[0].strip()
                 _dict["location"] = item[1].strip()
                 _dict["condition"] = item[2].strip()
@@ -195,13 +196,20 @@ def Normalize(my_data):
                     print(f"{index} swap price and others")
             except:
                 pass
+
+            try:
+                if "k" in _dict["price"]:
+                    _dict["price"] = _dict["price"].replace("k", "000")
+                    if '.' in _dict["price"]:
+                        _dict["price"] = _dict["price"].replace('.', '')
+                if "K" in _dict["price"]:
+                    _dict["price"] = _dict["price"].replace("K", "000")
+                    if '.' in _dict["price"]:
+                        _dict["price"] = _dict["price"].replace('.', '')
+            except:
+                pass
     print("Done")
     return normalize_data
-
-    # price
-    # [4] and [4][0].isdigit()
-    # 1. 純數字
-    # 2. 數字k/K
 
     # if (len(item[1]) > 2):
     # item[1] = item[1][0] + item[1][1]
@@ -239,16 +247,16 @@ def Normalize(my_data):
     #             pass
     #         try:
     #             if (item[4][0].isdigit()):
-    #                 list_k = item[4].split('k')
+    #                 list_k = item[4].split("k")
     #                 if len(list_k) > 1:
     #                     item[4] = str(int(float(list_k[0]) * 1000)) + list_k[1]
-    #                 list_K = item[4].split('K')
+    #                 list_K = item[4].split("K")
     #                 if len(list_K) > 1:
     #                     item[4] = str(int(float(list_K[0]) * 1000)) + list_K[1]
     #         except:
     #             pass
     #         try:
-    #             if (item[4][-1].lower() == 'k'):
+    #             if (item[4][-1].lower() == "k"):
     #                 item[4] = str(int(float(item[4][0:-1]) * 1000))
     #         except:
     #             pass
@@ -264,7 +272,7 @@ def Normalize(my_data):
     #             _dict["name"] += _str[0]
     #             if (len(_str) > 1):
     #                 _dict["price"] = _str[1]
-    #                 if (_dict["price"][-1].lower() == 'k'):
+    #                 if (_dict["price"][-1].lower() == "k"):
     #                     _dict["price"] = str(
     #                         int(float(_dict["price"][0:-1]) * 1000))
     #             if (len(_str) > 2):

@@ -18,7 +18,7 @@ url = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
 crawl_data = crawler.GetData(url)
 normalized_data = crawler.Normalize(crawl_data)
-print(normalized_data)
+# print(normalized_data)
 
 my_data = crawler.ReadJson()
 
