@@ -18,16 +18,12 @@ line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
 url = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
 
-def main(argv):
-    if (len(argv) > 1 and argv[1] == '--delay'):
-        crawler.DoSomeDelay()
+def SendLineMessage(msg):
+    query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message={msg}" https://notify-api.line.me/api/notify'
+    os.system(query)
 
-    crawl_data = crawler.GetData(url)
-    normalized_data = crawler.Normalize(crawl_data)
-    # print(normalized_data)
 
-    my_data = crawler.ReadJson()
-
+def SendItemMessage(my_data, normalized_data):
     for i in range(
             int(my_data["LAST_UPDATED_ID"]) + 1,
             int(normalized_data["LAST_UPDATED_ID"]) + 1):
@@ -40,10 +36,21 @@ def main(argv):
         msg = f"[{msg_sell_or_collect}]{msg_name}"
         if msg_price != "":
             msg += f" - NT${msg_price}"
-        msg = urllib.parse.quote(msg)
+        msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
+        SendLineMessage(msg)
 
-        query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A{msg}%0D%0A({msg_datetime})" https://notify-api.line.me/api/notify'
-        os.system(query)
+
+def main(argv):
+    if (len(argv) > 1 and argv[1] == '--delay'):
+        crawler.DoSomeDelay()
+
+    crawl_data = crawler.GetPushData(url)
+    normalized_data = crawler.Normalize(crawl_data)
+    # print(normalized_data)
+
+    my_data = crawler.ReadJson()
+
+    SendItemMessage(my_data, normalized_data)
 
     # TODO:檢查ID變小
     # if id變小:

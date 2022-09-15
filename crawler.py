@@ -38,7 +38,7 @@ def CrawlerFindAll(url, dom, class_list):
     return result_list
 
 
-def GetData(url):
+def GetPushData(url):
     print("Getting data...")
     class_ = ["push-content", "push-ipdatetime", "push-userid"]
     push_content, push_ipdatetime, push_userid = CrawlerFindAll(
