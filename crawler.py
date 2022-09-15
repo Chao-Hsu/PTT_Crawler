@@ -164,8 +164,9 @@ def Normalize(my_data):
                         or "皆可" in item[2] or "不限" in item[2]):
                     item.insert(2, "")
             except:
-                print(f"#{index} condition error")
-
+                print("condition error")
+                print(normalize_data[str(index)]["origin"])
+                print()
             # 0    1   2    3   4    5   6
             # 賣徵_地點_狀況_品名_其它_價錢_其它    7
             # 0    1   2    3   4    5   6    7
@@ -186,7 +187,9 @@ def Normalize(my_data):
                     for i in range(len(item) - others_index):
                         item.pop(-1)
             except:
-                print(f"#{index} rearrange fail")
+                print("rearrange fail")
+                print(normalize_data[str(index)]["origin"])
+                print()
 
             _dict = normalize_data[str(index)]
 
@@ -198,24 +201,36 @@ def Normalize(my_data):
                 try:
                     _dict["price"] = item[4].strip()
                 except:
-                    print(f"#{index} price fail")
+                    print("price fail")
+                    print(normalize_data[str(index)]["origin"])
+                    print()
                 try:
                     _dict["others"] = item[5].strip()
                 except:
-                    print(f"#{index} others fail")
+                    print("others fail")
+                    print(normalize_data[str(index)]["origin"])
+                    print()
 
+            except:
+                print("obj fail")
+                print(normalize_data[str(index)]["origin"])
+                print()
+
+            try:
                 # 0    1   2    3   4    5
                 # 賣徵_地點_狀況_品名_品名_其它     6
                 if not isPrice(_dict["price"]):
                     _dict["price"], _dict["others"] = _dict["others"], _dict[
                         "price"]
             except:
-                print(f"#{index} obj fail")
+                print("swap price and fail")
+                print(normalize_data[str(index)]["origin"])
+                print()
 
             try:
                 _dict["price"] = ReplaceK('K', ReplaceK('k', _dict["price"]))
             except:
-                print(f"#{index} ReplaceK fail")
+                print("ReplaceK fail")
         except:
             print()
             print(f"!!!")

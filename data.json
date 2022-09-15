@@ -1,6 +1,6 @@
 {
-    "LAST_UPDATED_ID": "207",
-    "LAST_UPDATED_DATETIME": "2022-09-15 11:18:00",
+    "LAST_UPDATED_ID": "208",
+    "LAST_UPDATED_DATETIME": "2022-09-15 14:09:00",
     "1": {
         "sell_or_collect": "賣",
         "location": "全國",
@@ -2070,5 +2070,15 @@
         "others": "水貨近全新",
         "datetime": "2022-09-15 11:18:00",
         "origin": "賣_全國_二手_srh1840_9K_水貨近全新_站內"
+    },
+    "208": {
+        "sell_or_collect": "徵",
+        "location": "全國",
+        "condition": "皆可 EAC45GR 線",
+        "name": "1000",
+        "price": "",
+        "others": "",
+        "datetime": "2022-09-15 14:09:00",
+        "origin": "徵_全國_皆可 EAC45GR 線_1000"
     }
 }
