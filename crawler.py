@@ -139,6 +139,8 @@ def ReplaceK(k, obj):
         if '0.' in obj:
             obj = obj.replace('0.', '')
             obj = obj.replace(k, "00")
+        elif '.5k' in obj:
+            obj = obj.replace('.5k', '500')
         else:
             obj = obj.replace(k, "000")
             if '.' in obj:
@@ -222,8 +224,11 @@ def Normalize(my_data):
                 if not isPrice(_dict["price"]):
                     _dict["price"], _dict["others"] = _dict["others"], _dict[
                         "price"]
+                    print()
+                    print(normalize_data[str(index)], "!!!!!!!!!")
+                    print()
             except:
-                print("swap price and fail")
+                print("swap price and others fail")
                 print(normalize_data[str(index)]["origin"])
                 print()
 
