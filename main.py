@@ -4,9 +4,9 @@ import urllib.parse
 import datetime
 
 #prod
-# line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
+line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp"
 #test
-line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
+# line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"
 
 # TODO:改成id變小的時候
 # now = tonow = datetime.datetime.now()

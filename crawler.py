@@ -15,7 +15,7 @@ def DoSomeDelay():
 
 
 def CrawlerFindAll(url, dom, class_list):
-    # DoSomeDelay()
+    DoSomeDelay()
 
     user_agent = UserAgent()
     my_headers = {
@@ -134,6 +134,14 @@ def isPrice(obj):
         return False
 
 
+def ReplaceK(k, obj):
+    if k in obj:
+        obj = obj.replace(k, "000")
+        if '.' in obj:
+            obj = obj.replace('.', '')
+    return obj
+
+
 def Normalize(my_data):
     print("Normalizing...")
     normalize_data = copy.deepcopy(my_data)
@@ -144,11 +152,15 @@ def Normalize(my_data):
         # 0    1   2    3   4    5
         # 賣徵_地點_狀況_品名_價錢_其它
 
-        if (item[0] in ("賣", "售", "徵", "買")):
-            # 賣徵_地點_品名_價錢_其它
-            if not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
-                    or "皆可" in item[2] or "不限" in item[2]):
-                item.insert(2, "")
+        # if (item[0] in ("賣", "售", "徵", "買")):
+        # 賣徵_地點_品名_價錢_其它
+        try:
+            try:
+                if not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
+                        or "皆可" in item[2] or "不限" in item[2]):
+                    item.insert(2, "")
+            except:
+                print(f"#{index} condition error")
 
             # 0    1   2    3   4    5   6
             # 賣徵_地點_狀況_品名_其它_價錢_其它    7
@@ -170,7 +182,7 @@ def Normalize(my_data):
                     for i in range(len(item) - others_index):
                         item.pop(-1)
             except:
-                print(f"err {index}")
+                print(f"#{index} rearrange fail")
 
             _dict = normalize_data[str(index)]
 
@@ -182,118 +194,33 @@ def Normalize(my_data):
                 try:
                     _dict["price"] = item[4].strip()
                 except:
-                    pass
+                    print(f"#{index} price fail")
                 try:
                     _dict["others"] = item[5].strip()
                 except:
-                    pass
+                    print(f"#{index} others fail")
 
                 # 0    1   2    3   4    5
                 # 賣徵_地點_狀況_品名_品名_其它     6
                 if not isPrice(_dict["price"]):
                     _dict["price"], _dict["others"] = _dict["others"], _dict[
                         "price"]
-                    print(f"{index} swap price and others")
             except:
-                pass
+                print(f"#{index} obj fail")
 
             try:
-                if "k" in _dict["price"]:
-                    _dict["price"] = _dict["price"].replace("k", "000")
-                    if '.' in _dict["price"]:
-                        _dict["price"] = _dict["price"].replace('.', '')
-                if "K" in _dict["price"]:
-                    _dict["price"] = _dict["price"].replace("K", "000")
-                    if '.' in _dict["price"]:
-                        _dict["price"] = _dict["price"].replace('.', '')
+                _dict["price"] = ReplaceK('K', ReplaceK('k', _dict["price"]))
             except:
-                pass
+                print(f"#{index} ReplaceK fail")
+        except:
+            print()
+            print(f"!!!")
+            print(f"{index} fatal error")
+            print(f"!!!")
+            print()
+
     print("Done")
     return normalize_data
-
-    # if (len(item[1]) > 2):
-    # item[1] = item[1][0] + item[1][1]
-
-    #         try:
-    #             if (item[3][0].isdigit()):
-    #                 if (len(item) <= 4):
-    #                     item.append(item[3])
-    #                     item[3] = ""
-    #                 elif (not item[4][0].isdigit()):
-    #                     item[3], item[4] = item[4], item[3]
-    #         except:
-    #             pass
-    #         try:
-    #             if (item[5][0].isdigit()):
-    #                 if (len(item) <= 4):
-    #                     item.append(item[3])
-    #                     item[3] = ""
-    #                 elif (not item[4][0].isdigit()):
-    #                     item[5], item[4] = item[4], item[5]
-    #         except:
-    #             pass
-    #         try:
-    #             if (not item[4][0].isdigit() and not item[5][0].isdigit()):
-    #                 if (item[5] == "" and item[4] != ""):
-    #                     item[5], item[4] = item[4], item[5]
-    #         except:
-    #             pass
-    #         TODO: 重複???
-    #         try:
-    #             if (not item[4][0].isdigit() and not item[5][0].isdigit()):
-    #                 if (item[5] == "" and item[4] != ""):
-    #                     item[5], item[4] = item[4], item[5]
-    #         except:
-    #             pass
-    #         try:
-    #             if (item[4][0].isdigit()):
-    #                 list_k = item[4].split("k")
-    #                 if len(list_k) > 1:
-    #                     item[4] = str(int(float(list_k[0]) * 1000)) + list_k[1]
-    #                 list_K = item[4].split("K")
-    #                 if len(list_K) > 1:
-    #                     item[4] = str(int(float(list_K[0]) * 1000)) + list_K[1]
-    #         except:
-    #             pass
-    #         try:
-    #             if (item[4][-1].lower() == "k"):
-    #                 item[4] = str(int(float(item[4][0:-1]) * 1000))
-    #         except:
-    #             pass
-    #         count_data += 1
-    #         dict_data[str(count_data)] = GenerateObj(item, push_userid[i].text,
-    #                                                  count_data, date)
-    #         dict_data[str(count_data)]["origin"] = _item
-    #     else:
-    #         _s = push_content[i].text.replace(": ", "").strip()
-    #         _str = _s.split("_")
-    #         _dict = dict_data[str(count_data)]
-    #         if not _dict.get("price"):
-    #             _dict["name"] += _str[0]
-    #             if (len(_str) > 1):
-    #                 _dict["price"] = _str[1]
-    #                 if (_dict["price"][-1].lower() == "k"):
-    #                     _dict["price"] = str(
-    #                         int(float(_dict["price"][0:-1]) * 1000))
-    #             if (len(_str) > 2):
-    #                 _dict["others"] = " ".join(_str[2:len(_str)])
-    #         elif _dict.get("price"):
-    #             isDigitEach = True
-    #             for c in _str[0]:
-    #                 if not c.isdigit():
-    #                     isDigitEach = False
-    #             if isDigitEach:
-    #                 _dict["price"] += _str[0]
-    #             else:
-    #                 __str = " ".join(_str)
-    #                 if _dict.get("others"):
-    #                     _dict["others"] += __str
-    #                 else:
-    #                     _dict["others"] = __str
-    #         dict_data[str(count_data)]["origin"] += _s
-    # dict_data["LAST_UPDATED_DATETIME"] = str(last_update)
-    # dict_data["LAST_UPDATED_ID"] = str(count_data)
-    # return dict_data
 
 
 def WtiteJson(my_data, filename):
