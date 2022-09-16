@@ -38,7 +38,7 @@ def SendItemMessage(my_data, normalized_data):
             msg += f" - NT${msg_price}"
         msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
         if item["used_id"] in id_blacklist:
-            msg = f"{urllib.parse.quote('中壢人注意！！！')}{msg}"
+            msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
         SendLineMessage(msg)
 
 
@@ -50,7 +50,7 @@ def SendTitleMessage(my_data, new_data_id_list):
         msg_date = urllib.parse.quote(item["date"])
         msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
         if item["used_id"] in id_blacklist:
-            msg = f"{urllib.parse.quote('中壢人注意！！！')}{msg}"
+            msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
         SendLineMessage(msg)
 
 
