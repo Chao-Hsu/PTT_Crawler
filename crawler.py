@@ -63,9 +63,13 @@ def GetTitleData(url, old_data):
                     pass
                 try:
                     input_date = date[index].string.strip().split('/')
-                    title_date = f"{datetime.datetime.today().year}-{input_date[0]}-{input_date[1]}"
+                    _title_date = datetime.datetime(
+                        year=datetime.date.today().year,
+                        month=int(input_date[0]),
+                        day=int(input_date[1]))
+                    title_date = _title_date.strftime('%Y-%m-%d')
                 except:
-                    pass
+                    print(f"date: {date} error")
                 try:
                     _id = title_href.strip().split('/')[-1].replace(
                         '.html', '')
@@ -79,7 +83,7 @@ def GetTitleData(url, old_data):
                             "origin": title_string
                         }
                 except:
-                    pass
+                    print(f"id: {_id} error")
         except:
             pass
 
@@ -103,13 +107,13 @@ def GetPushData(url):
     print("Go through data...")
     for i in range(len(push_content)):
         _item = push_content[i].text.replace(": ", "").strip()
-        intput_date = push_ipdatetime[i].text.replace("\n", "_").replace(
+        input_date = push_ipdatetime[i].text.replace("\n", "_").replace(
             ":", "_").replace("/", "_").replace(" ", "_").split("_")
         push_datetime = datetime.datetime(year=datetime.date.today().year,
-                                          month=int(intput_date[1]),
-                                          day=int(intput_date[2]),
-                                          hour=int(intput_date[3]),
-                                          minute=int(intput_date[4]))
+                                          month=int(input_date[1]),
+                                          day=int(input_date[2]),
+                                          hour=int(input_date[3]),
+                                          minute=int(input_date[4]))
         last_update_datetime = push_datetime
 
         if (_item[0] in ("賣", "售", "徵", "買")):
@@ -122,14 +126,15 @@ def GetPushData(url):
                 "price": "",
                 "others": "",
                 "used_id": push_userid[i].text.replace(": ", "").strip(),
-                "datetime": str(push_datetime),
+                "datetime": push_datetime.strftime('%Y-%m-%d %H:%M'),
                 "origin": _item
             }
         else:
             _s = push_content[i].text.replace(": ", "").strip()
             dict_data[str(count_data)]["origin"] += _s
     dict_data["LAST_UPDATED_ID"] = str(count_data)
-    dict_data["LAST_UPDATED_DATETIME"] = str(last_update_datetime)
+    dict_data["LAST_UPDATED_DATETIME"] = last_update_datetime.strftime(
+        '%Y-%m-%d %H:%M')
 
     print("Done")
     return dict_data
