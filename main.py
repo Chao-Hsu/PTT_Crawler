@@ -15,7 +15,7 @@ line_notify_token = crawler.ReadJson("Line_Token")["prod"]
 url_title = "https://www.ptt.cc/bbs/Headphone/index.html"
 url_push = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
-id_blacklist = ['IPv7', 'kev72806']
+id_blacklist = ['IPv7', 'kev72806', 'GpuMan']
 
 
 def SendLineMessage(msg):
