@@ -8,7 +8,7 @@ import sys
 # line_notify_token = "8drpZinsFqBppybCSdzT8Nd4vcfXimIChGA7UWdZike"   #Akira Ptt Crawler
 # line_notify_token = "ZeniahVg1Mp7VVJO57EVlKbUGQf72zMnP4LZUMy5oxp" #PttHeadphoneCrawler
 #test
-line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU" #Akira Ptt Crawler to person
+line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU"  #Akira Ptt Crawler to person
 
 # TODO:改成id變小的時候
 # now = tonow = datetime.datetime.now()
@@ -18,6 +18,8 @@ line_notify_token = "UMoGyNcXg6FyOihn9CyTE6JcCql4KDdvUMLfouDGxMU" #Akira Ptt Cra
 
 url_title = "https://www.ptt.cc/bbs/Headphone/index.html"
 url_push = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
+
+id_blacklist = ['IPv7', 'kev72806']
 
 
 def SendLineMessage(msg):
@@ -39,6 +41,8 @@ def SendItemMessage(my_data, normalized_data):
         if msg_price != "":
             msg += f" - NT${msg_price}"
         msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
+        if item["used_id"] in id_blacklist:
+            msg = f"{urllib.parse.quote('中壢人注意！！！')}{msg}"
         SendLineMessage(msg)
 
 
@@ -49,6 +53,8 @@ def SendTitleMessage(my_data, new_data_id_list):
         msg_url = urllib.parse.quote(item["url"])
         msg_date = urllib.parse.quote(item["date"])
         msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
+        if item["used_id"] in id_blacklist:
+            msg = f"{urllib.parse.quote('中壢人注意！！！')}{msg}"
         SendLineMessage(msg)
 
 
