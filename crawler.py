@@ -6,6 +6,7 @@ import copy
 from fake_useragent import UserAgent
 import random
 import time
+import re
 
 isPrintError = False
 
@@ -140,12 +141,23 @@ def GetPushData(url):
     return dict_data
 
 
+def isSlicePrice(obj):
+    list_keyword = ['k', 'K', '元', '00', '50']
+    index_keyword = []
+    for i in list_keyword:
+        if i in obj:
+            index_keyword.append(obj.index(i))
+    # TODO:正數
+    pattern = re.compile(r'^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$')
+    for i in index_keyword:
+        if not pattern.match(obj[:i]):
+            return False
+    return True
+
+
 def isPrice(obj):
-    if "k" in obj or "K" in obj or '元' in obj or '00' in obj or '50' in obj or obj[
-            -1] == '0':
-        return True
-    else:
-        return False
+    return isSlicePrice(obj) and ("k" in obj or "K" in obj or '元' in obj
+                                  or '00' in obj or '50' in obj)
 
 
 def ReplaceK(obj, k_list):
