@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
 import datetime
-import json
 import copy
 from fake_useragent import UserAgent
 import random
@@ -277,14 +276,3 @@ def CheckData(old_data, new_data):
             checked_data[_id] = new_data[_id]
 
     return checked_data
-
-
-def WtiteJson(my_data, filename):
-    json_data = open(f"./json/{filename}.json", 'w', encoding='utf-8')
-    json.dump(my_data, json_data, ensure_ascii=False)
-    json_data.close()
-
-
-def ReadJson(filename):
-    with open(f'./json/{filename}.json', 'r', encoding='utf-8') as f:
-        return json.load(f)
