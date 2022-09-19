@@ -1,6 +1,7 @@
 import os
 import urllib.parse
 import datetime
+import json_io
 
 line_notify_token = ""
 
@@ -10,7 +11,7 @@ line_notify_token = ""
 #     msg = f"{str(now.month)}月置底推文交易"
 #     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
 
-id_blacklist = ['IPv7', 'kev72806', 'GpuMan']
+id_blacklist = json_io.ReadJson('keywords')['blacklist']['id']
 
 
 def SendLineMessage(msg):
@@ -24,26 +25,34 @@ def SendItemMessage(my_data, normalized_data):
             int(normalized_data["LAST_UPDATED_ID"]) + 1):
 
         item = normalized_data[str(i)]
+
         msg_sell_or_collect = item["sell_or_collect"]
         msg_name = item["name"]
         msg_price = item["price"]
         msg_datetime = item["datetime"]
         msg = f"[{msg_sell_or_collect}]{msg_name}"
+
         if msg_price != "":
             msg += f" - NT${msg_price}"
+
         msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
+
         if item["used_id"] in id_blacklist:
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
+
         SendLineMessage(msg)
 
 
 def SendTitleMessage(my_data, new_data_id_list):
     for _id in new_data_id_list:
         item = my_data[_id]
+
         msg_title = urllib.parse.quote(item["title"])
         msg_url = urllib.parse.quote(item["url"])
         msg_date = urllib.parse.quote(item["date"])
         msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
+
         if item["used_id"] in id_blacklist:
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
+
         SendLineMessage(msg)
