@@ -146,16 +146,18 @@ def isSlicePrice(obj):
     index_keyword = []
     for i in list_keyword:
         if i in obj:
-            index_keyword.append(obj.index(i))
+            index_keyword.append(obj.find(i))
     # TODO:正數
     pattern = re.compile(r'^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$')
     for i in index_keyword:
-        if not pattern.match(obj[:i]):
+        _str = obj[:i]
+        if i != -1 and _str != '' and not pattern.match(_str):
             return False
     return True
 
 
 def isPrice(obj):
+    # TODO: fix price with / or ~
     return isSlicePrice(obj) and ("k" in obj or "K" in obj or '元' in obj
                                   or '00' in obj or '50' in obj)
 
