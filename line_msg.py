@@ -26,18 +26,35 @@ def SendItemMessage(my_data, normalized_data):
 
         item = normalized_data[str(i)]
 
-        msg_sell_or_collect = item["sell_or_collect"]
-        msg_name = item["name"]
-        msg_price = item["price"]
-        msg_datetime = item["datetime"]
-        msg = f"[{msg_sell_or_collect}]{msg_name}"
+        line_newline = "%0D%0A"
+
+        msg_sell_or_collect = urllib.parse.quote(item["sell_or_collect"])
+        msg_name = urllib.parse.quote(item["name"])
+        msg_price = urllib.parse.quote(item["price"])
+        msg_user_id = urllib.parse.quote(item["user_id"])
+        msg_others = urllib.parse.quote(item["others"])
+        msg_datetime = urllib.parse.quote(item["datetime"])
+
+        msg = ""
+
+        msg += f"{line_newline}{urllib.parse.quote('Headphone置底推文交易')}"
+
+        if msg_name != "":
+            msg += f"{line_newline}[{msg_sell_or_collect}] {msg_name}"
 
         if msg_price != "":
-            msg += f" - NT${msg_price}"
+            msg += f"{line_newline}[{urllib.parse.quote('價錢')}] {msg_price}"
 
-        msg = f"%0D%0A{urllib.parse.quote(msg)}%0D%0A({msg_datetime})"
+        if msg_user_id != "":
+            msg += f"{line_newline}[ID] {msg_user_id}"
 
-        if item["used_id"] in id_blacklist:
+        if msg_others != "":
+            msg += f"{line_newline}[{urllib.parse.quote('備註')}] {msg_others}"
+
+        if msg_datetime != "":
+            msg += f"{line_newline}({msg_datetime})"
+
+        if item["user_id"] in id_blacklist:
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
 
         SendLineMessage(msg)
@@ -52,7 +69,7 @@ def SendTitleMessage(my_data, new_data_id_list):
         msg_date = urllib.parse.quote(item["date"])
         msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
 
-        if item["used_id"] in id_blacklist:
+        if item["user_id"] in id_blacklist:
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
 
         SendLineMessage(msg)

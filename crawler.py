@@ -78,7 +78,7 @@ def GetTitleData(url, old_data):
                         dict_data[_id] = {
                             "title": _title,
                             "url": "https://www.ptt.cc" + title_href,
-                            "used_id": author[index].string,
+                            "user_id": author[index].string,
                             "date": title_date,
                             "origin": title_string
                         }
@@ -125,7 +125,7 @@ def GetPushData(url):
                 "name": "",
                 "price": "",
                 "others": "",
-                "used_id": push_userid[i].text.replace(": ", "").strip(),
+                "user_id": push_userid[i].text.replace(": ", "").strip(),
                 "datetime": push_datetime.strftime('%Y-%m-%d %H:%M'),
                 "origin": _item
             }
@@ -206,21 +206,17 @@ def Normalize(my_data):
                 collect_condition = ("一手", "二手", "全新", "皆可", "不限")
                 for i in collect_condition:
                     if i in item[2]:
-                        if index == 269: print("3")
                         _list = item[2].split(i)
                         if len(_list) > 1:
-                            if index == 269: print(_list)
                             if _list[1] != '':
                                 item[3] = _list[1]
                             item[2] = i
                             break
                 if item[0] in ("賣", "售"):
                     if not item[2] in sell_condition:
-                        if index == 269: print("1")
                         item.insert(2, "")
                 elif item[0] in ("徵", "買"):
                     if not item[2] in collect_condition:
-                        if index == 269: print("2")
                         item.insert(2, "")
 
                 # if not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
