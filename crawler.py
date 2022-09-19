@@ -201,9 +201,31 @@ def Normalize(my_data):
         # 賣徵_地點_品名_價錢_其它
         try:
             try:
-                if not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
-                        or "皆可" in item[2] or "不限" in item[2]):
-                    item.insert(2, "")
+                # TODO: /
+                sell_condition = ("一手", "二手", "全新")
+                collect_condition = ("一手", "二手", "全新", "皆可", "不限")
+                for i in collect_condition:
+                    if i in item[2]:
+                        if index == 269: print("3")
+                        _list = item[2].split(i)
+                        if len(_list) > 1:
+                            if index == 269: print(_list)
+                            if _list[1] != '':
+                                item[3] = _list[1]
+                            item[2] = i
+                            break
+                if item[0] in ("賣", "售"):
+                    if not item[2] in sell_condition:
+                        if index == 269: print("1")
+                        item.insert(2, "")
+                elif item[0] in ("徵", "買"):
+                    if not item[2] in collect_condition:
+                        if index == 269: print("2")
+                        item.insert(2, "")
+
+                # if not ("一手" in item[2] or "二手" in item[2] or "全新" in item[2]
+                # or "皆可" in item[2] or "不限" in item[2]):
+                # item.insert(2, "")
             except:
                 ErrorMessage("condition", normalize_data[str(index)])
 
@@ -259,7 +281,7 @@ def Normalize(my_data):
                              normalize_data[str(index)])
 
             try:
-                k_list = ['k', 'K']
+                k_list = ('k', 'K')
                 _dict["price"] = ReplaceK(_dict["price"], k_list)
             except:
                 ErrorMessage("ReplaceK", normalize_data[str(index)])
