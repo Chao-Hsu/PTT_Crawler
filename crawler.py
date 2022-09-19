@@ -162,11 +162,16 @@ def isPrice(obj):
 
 
 def ReplaceK(obj, k_list):
+    point_index = obj.find('.')
     for k in k_list:
         if k in obj:
             if '.' in obj:
+                _int = obj[:point_index]
                 if '0.' in obj:
-                    obj = obj.replace('0.', '').replace(k, "00")
+                    if int(_int) > 0:
+                        obj = obj.replace('.', '').replace(k, '00')
+                    else:
+                        obj = obj.replace('0.', '').replace(k, "00")
                 else:
                     obj = obj.replace('.', '').replace(k, '00')
             else:
