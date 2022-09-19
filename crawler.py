@@ -40,7 +40,7 @@ def CrawlerFindAll(url, dom, class_list):
 
 def GetTitleData(url, old_data):
     print("Getting title data...")
-    class_ = ["title", "author", "date"]
+    class_ = ("title", "author", "date")
     title, author, date = CrawlerFindAll(url, "div", class_)
     print("Done")
 
@@ -93,7 +93,7 @@ def GetTitleData(url, old_data):
 
 def GetPushData(url):
     print("Getting push data...")
-    class_ = ["push-content", "push-ipdatetime", "push-userid"]
+    class_ = ("push-content", "push-ipdatetime", "push-userid")
     push_content, push_ipdatetime, push_userid = CrawlerFindAll(
         url, "span", class_)
     print("Done")
@@ -141,9 +141,9 @@ def GetPushData(url):
 
 
 def isSlicePrice(obj):
-    list_keyword = ['k', 'K', '元', '00', '50']
+    tuple_keyword = ('k', 'K', '元', '00', '50')
     index_keyword = []
-    for i in list_keyword:
+    for i in tuple_keyword:
         if i in obj:
             index_keyword.append(obj.find(i))
     # TODO:正數
