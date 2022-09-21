@@ -12,13 +12,12 @@ crawler.isPrintError = False
 
 def main(argv):
     if datetime.datetime.now().hour >= 8 or datetime.datetime.now().hour < 3:
-        if (len(argv) > 1 and argv[1] == '--prod'):
-            version = "prod"
-        else:
-            version = "test"
-        if (len(argv) > 2 and argv[2] == '--delay'):
-            crawler.DoSomeDelay()
-        
+        version = "test"
+        if len(argv) > 1:
+            if '--prod' in argv:
+                version = "prod"
+            if '--delay' in argv:
+                crawler.DoSomeDelay()
 
         line_msg.line_notify_token = json_io.ReadJson("Line_Token")[version]
 
