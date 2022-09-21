@@ -1,1 +1,1 @@
-python main.py --delay
+python main.py --prod --delay
