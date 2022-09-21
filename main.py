@@ -7,13 +7,20 @@ import datetime
 url_title = "https://www.ptt.cc/bbs/Headphone/index.html"
 url_push = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
+crawler.isPrintError = False
+
 
 def main(argv):
     if datetime.datetime.now().hour >= 8 or datetime.datetime.now().hour < 3:
-        if (len(argv) > 1 and argv[1] == '--delay'):
+        if (len(argv) > 1 and argv[1] == '--prod'):
+            version = "prod"
+        else:
+            version = "test"
+        if (len(argv) > 2 and argv[2] == '--delay'):
             crawler.DoSomeDelay()
+        
 
-        line_msg.line_notify_token = json_io.ReadJson("Line_Token")["prod"]
+        line_msg.line_notify_token = json_io.ReadJson("Line_Token")[version]
 
         # title
         my_title_data = json_io.ReadJson("data_title")
