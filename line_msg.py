@@ -12,6 +12,7 @@ line_notify_token = ""
 #     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
 
 id_blacklist = json_io.ReadJson('keywords')['blacklist']['id']
+line_newline = "%0D%0A"
 
 
 def SendLineMessage(msg):
@@ -25,8 +26,8 @@ def SendItemMessage(my_data, normalized_data):
             int(normalized_data["LAST_UPDATED_ID"]) + 1):
 
         item = normalized_data[str(i)]
-
-        line_newline = "%0D%0A"
+        if item["name"] == "":
+            continue
 
         msg_sell_or_collect = urllib.parse.quote(item["sell_or_collect"])
         msg_name = urllib.parse.quote(item["name"])
