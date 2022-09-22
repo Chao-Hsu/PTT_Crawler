@@ -12,8 +12,11 @@ line_notify_token_personal = ""
 #     msg = f"{str(now.month)}月置底推文交易"
 #     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
 
-id_blacklist = json_io.ReadJson('keywords')['blacklist']['id']
 line_newline = "%0D%0A"
+
+
+def GetIdBlacklist():
+    return json_io.ReadJson('keywords')['blacklist']['id']
 
 
 def SendLineMessageOfError(error_msg):
@@ -45,11 +48,13 @@ def SendItemMessage(my_data, normalized_data):
                 msg_list.append(f'[價錢] {item["price"]}')
             if item["others"] != "":
                 msg_list.append(f'[備註] {item["others"]}')
-        msg_list.append(f'[ID] {item["user_id"]}')
+        msg_list.append(
+            f'[ID] {item["user_id"]+(" <--中壢人注意！" if item["user_id"] in GetIdBlacklist() else "")}'
+        )
         msg_list.append(f'({item["datetime"]})')
 
-        if item["user_id"] in id_blacklist:
-            msg_list.insert(0, '---中壢人注意！---')
+        # if item["user_id"] in GetIdBlacklist():
+        #     msg_list.insert(0, '---中壢人注意！---')
 
         msg = line_newline
         for m in msg_list:
@@ -68,7 +73,7 @@ def SendTitleMessage(my_data, new_data_id_list):
         msg_date = urllib.parse.quote(item["date"])
         msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
 
-        if item["user_id"] in id_blacklist:
+        if item["user_id"] in GetIdBlacklist():
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
 
         SendLineMessage(msg)
