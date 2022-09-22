@@ -4,6 +4,7 @@ import datetime
 import json_io
 
 line_notify_token = ""
+line_notify_token_personal = ""
 
 # TODO:改成id變小的時候
 # now = tonow = datetime.datetime.now()
@@ -13,6 +14,11 @@ line_notify_token = ""
 
 id_blacklist = json_io.ReadJson('keywords')['blacklist']['id']
 line_newline = "%0D%0A"
+
+
+def SendLineMessageOfError(error_msg):
+    query = f'curl -H "Authorization: Bearer {line_notify_token_personal}" -d "message={error_msg}" https://notify-api.line.me/api/notify'
+    os.system(query)
 
 
 def SendLineMessage(msg):
@@ -25,38 +31,30 @@ def SendItemMessage(my_data, normalized_data):
             int(my_data["LAST_UPDATED_ID"]) + 1,
             int(normalized_data["LAST_UPDATED_ID"]) + 1):
 
+        msg_list = ['Headphone #置底推文交易']
+
         item = normalized_data[str(i)]
         if item["name"] == "":
-            continue
-
-        msg_sell_or_collect = urllib.parse.quote(item["sell_or_collect"])
-        msg_name = urllib.parse.quote(item["name"])
-        msg_price = urllib.parse.quote(item["price"])
-        msg_user_id = urllib.parse.quote(item["user_id"])
-        msg_others = urllib.parse.quote(item["others"])
-        msg_datetime = urllib.parse.quote(item["datetime"])
-
-        msg = ""
-
-        msg += f"{line_newline}{urllib.parse.quote('Headphone置底推文交易')}"
-
-        if msg_name != "":
-            msg += f"{line_newline}[{msg_sell_or_collect}] {msg_name}"
-
-        if msg_price != "":
-            msg += f"{line_newline}[{urllib.parse.quote('價錢')}] {msg_price}"
-
-        if msg_user_id != "":
-            msg += f"{line_newline}[ID] {msg_user_id}"
-
-        if msg_others != "":
-            msg += f"{line_newline}[{urllib.parse.quote('備註')}] {msg_others}"
-
-        if msg_datetime != "":
-            msg += f"{line_newline}({msg_datetime})"
+            error_msg = f"{line_newline}Error: #{i} {urllib.parse.quote(item['origin'])}"
+            SendLineMessageOfError(error_msg)
+            msg_list.append(item["origin"])
+            # continue
+        else:
+            msg_list.append(f'[{item["sell_or_collect"]}] {item["name"]}')
+            if item["price"] != "":
+                msg_list.append(f'[價錢] {item["price"]}')
+            if item["others"] != "":
+                msg_list.append(f'[備註] {item["others"]}')
+        msg_list.append(f'[ID] {item["user_id"]}')
+        msg_list.append(f'({item["datetime"]})')
 
         if item["user_id"] in id_blacklist:
-            msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
+            msg_list.insert(0, '---中壢人注意！---')
+
+        msg = line_newline
+        for m in msg_list:
+            msg += urllib.parse.quote(m) + line_newline
+        msg += "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
         SendLineMessage(msg)
 

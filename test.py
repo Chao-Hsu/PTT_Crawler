@@ -19,7 +19,9 @@ def main(argv):
             if '--delay' in argv:
                 crawler.DoSomeDelay()
 
-        line_msg.line_notify_token = json_io.ReadJson("Line_Token")[version]
+        token = json_io.ReadJson("Line_Token")
+        line_msg.line_notify_token_personal = token["test"]
+        line_msg.line_notify_token = token[version]
 
         # title
         my_title_data = json_io.ReadJson("data_title")
