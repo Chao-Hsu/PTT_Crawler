@@ -16,7 +16,7 @@ line_newline = "%0D%0A"
 
 
 def GetIdBlacklist():
-    return json_io.ReadJson('keywords')['blacklist']['id']
+    return json_io.ReadJson("keywords")["blacklist"]["id"]
 
 
 def SendLineMessageOfError(error_msg):
@@ -31,14 +31,16 @@ def SendLineMessage(msg):
 
 def SendItemMessage(my_data, normalized_data):
     for i in range(
-            int(my_data["LAST_UPDATED_ID"]) + 1,
-            int(normalized_data["LAST_UPDATED_ID"]) + 1):
+        int(my_data["LAST_UPDATED_ID"]) + 1, int(normalized_data["LAST_UPDATED_ID"]) + 1
+    ):
 
-        msg_list = ['Headphone #置底推文交易']
+        msg_list = ["Headphone #置底推文交易"]
 
         item = normalized_data[str(i)]
         if item["name"] == "":
-            error_msg = f"{line_newline}Error: #{i} {urllib.parse.quote(item['origin'])}"
+            error_msg = (
+                f"{line_newline}Error: #{i} {urllib.parse.quote(item['origin'])}"
+            )
             SendLineMessageOfError(error_msg)
             msg_list.append(item["origin"])
             # continue
@@ -71,7 +73,7 @@ def SendTitleMessage(my_data, new_data_id_list):
         msg_title = urllib.parse.quote(item["title"])
         msg_url = urllib.parse.quote(item["url"])
         msg_date = urllib.parse.quote(item["date"])
-        msg = f'%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}'
+        msg = f"%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}"
 
         if item["user_id"] in GetIdBlacklist():
             msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"

@@ -20,12 +20,9 @@ def DoSomeDelay():
 def CrawlerFindAll(url, dom, class_list):
     user_agent = UserAgent()
     my_headers = {
-        "cookie":
-        "over18=1",
-        "content-type":
-        "text/html; charset=UTF-8",
-        "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36"
+        "cookie": "over18=1",
+        "content-type": "text/html; charset=UTF-8",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Safari/537.36",
     }
     response = requests.get(url, headers=my_headers)
     response.encoding = "utf-8"
@@ -50,29 +47,29 @@ def GetTitleData(url, old_data):
     print("Go through data...")
     for index in range(len(title)):
         try:
-            title_string = title[index].find('a').string
-            title_href = title[index].find('a')['href']
-            if '[交易]' in title_string or '贈送' in title_string:
+            title_string = title[index].find("a").string
+            title_href = title[index].find("a")["href"]
+            if "[交易]" in title_string or "贈送" in title_string:
                 try:
-                    if '[交易]' in title_string:
-                        title_index = title_string.index('[交易]') + 4
+                    if "[交易]" in title_string:
+                        title_index = title_string.index("[交易]") + 4
                         _title = title_string[title_index:].strip()
                     else:
                         _title = title_string.strip()
                 except:
                     pass
                 try:
-                    input_date = date[index].string.strip().split('/')
+                    input_date = date[index].string.strip().split("/")
                     _title_date = datetime.datetime(
                         year=datetime.date.today().year,
                         month=int(input_date[0]),
-                        day=int(input_date[1]))
-                    title_date = _title_date.strftime('%Y-%m-%d')
+                        day=int(input_date[1]),
+                    )
+                    title_date = _title_date.strftime("%Y-%m-%d")
                 except:
                     print(f"date: {date} error")
                 try:
-                    _id = title_href.strip().split('/')[-1].replace(
-                        '.html', '')
+                    _id = title_href.strip().split("/")[-1].replace(".html", "")
                     if not old_data.get(_id):
                         new_data.append(_id)
                         dict_data[_id] = {
@@ -80,7 +77,7 @@ def GetTitleData(url, old_data):
                             "url": "https://www.ptt.cc" + title_href,
                             "user_id": author[index].string,
                             "date": title_date,
-                            "origin": title_string
+                            "origin": title_string,
                         }
                 except:
                     print(f"id: {_id} error")
@@ -94,8 +91,7 @@ def GetTitleData(url, old_data):
 def GetPushData(url):
     print("Getting push data...")
     class_ = ("push-content", "push-ipdatetime", "push-userid")
-    push_content, push_ipdatetime, push_userid = CrawlerFindAll(
-        url, "span", class_)
+    push_content, push_ipdatetime, push_userid = CrawlerFindAll(url, "span", class_)
     print("Done")
 
     count_data = 0
@@ -107,16 +103,24 @@ def GetPushData(url):
     print("Go through data...")
     for i in range(len(push_content)):
         _item = push_content[i].text.replace(": ", "").strip()
-        input_date = push_ipdatetime[i].text.replace("\n", "_").replace(
-            ":", "_").replace("/", "_").replace(" ", "_").split("_")
-        push_datetime = datetime.datetime(year=datetime.date.today().year,
-                                          month=int(input_date[1]),
-                                          day=int(input_date[2]),
-                                          hour=int(input_date[3]),
-                                          minute=int(input_date[4]))
+        input_date = (
+            push_ipdatetime[i]
+            .text.replace("\n", "_")
+            .replace(":", "_")
+            .replace("/", "_")
+            .replace(" ", "_")
+            .split("_")
+        )
+        push_datetime = datetime.datetime(
+            year=datetime.date.today().year,
+            month=int(input_date[1]),
+            day=int(input_date[2]),
+            hour=int(input_date[3]),
+            minute=int(input_date[4]),
+        )
         last_update_datetime = push_datetime
 
-        if (_item[0] in ("賣", "售", "徵", "買")):
+        if _item[0] in ("賣", "售", "徵", "買"):
             count_data += 1
             dict_data[str(count_data)] = {
                 "sell_or_collect": "",
@@ -126,56 +130,56 @@ def GetPushData(url):
                 "price": "",
                 "others": "",
                 "user_id": push_userid[i].text.replace(": ", "").strip(),
-                "datetime": push_datetime.strftime('%Y-%m-%d %H:%M'),
-                "origin": _item
+                "datetime": push_datetime.strftime("%Y-%m-%d %H:%M"),
+                "origin": _item,
             }
         else:
             _s = push_content[i].text.replace(": ", "").strip()
             dict_data[str(count_data)]["origin"] += _s
     dict_data["LAST_UPDATED_ID"] = str(count_data)
-    dict_data["LAST_UPDATED_DATETIME"] = last_update_datetime.strftime(
-        '%Y-%m-%d %H:%M')
+    dict_data["LAST_UPDATED_DATETIME"] = last_update_datetime.strftime("%Y-%m-%d %H:%M")
 
     print("Done")
     return dict_data
 
 
 def isSlicePrice(obj):
-    tuple_keyword = ('k', 'K', '元', '00', '50')
+    tuple_keyword = ("k", "K", "元", "00", "50")
     index_keyword = []
     for i in tuple_keyword:
         if i in obj:
             index_keyword.append(obj.find(i))
     # TODO:正數
-    pattern = re.compile(r'^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$')
+    pattern = re.compile(r"^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$")
     for i in index_keyword:
         _str = obj[:i]
-        if i != -1 and _str != '' and not pattern.match(_str):
+        if i != -1 and _str != "" and not pattern.match(_str):
             return False
     return True
 
 
 def isPrice(obj):
     # TODO: fix price with / or ~
-    return isSlicePrice(obj) and ("k" in obj or "K" in obj or '元' in obj
-                                  or '00' in obj or '50' in obj)
+    return isSlicePrice(obj) and (
+        "k" in obj or "K" in obj or "元" in obj or "00" in obj or "50" in obj
+    )
 
 
 def ReplaceK(obj, k_list):
-    point_index = obj.find('.')
+    point_index = obj.find(".")
     for k in k_list:
         if k in obj:
-            if '.' in obj:
+            if "." in obj:
                 _int = obj[:point_index]
-                if '0.' in obj:
+                if "0." in obj:
                     if int(_int) > 0:
-                        obj = obj.replace('.', '').replace(k, '00')
+                        obj = obj.replace(".", "").replace(k, "00")
                     else:
-                        obj = obj.replace('0.', '').replace(k, "00")
+                        obj = obj.replace("0.", "").replace(k, "00")
                 else:
-                    obj = obj.replace('.', '').replace(k, '00')
+                    obj = obj.replace(".", "").replace(k, "00")
             else:
-                obj = obj.replace(k, '000')
+                obj = obj.replace(k, "000")
 
     return obj
 
@@ -208,7 +212,7 @@ def Normalize(my_data):
                     if i in item[2]:
                         _list = item[2].split(i)
                         if len(_list) > 1:
-                            if _list[1] != '':
+                            if _list[1] != "":
                                 item[3] = _list[1]
                             item[2] = i
                             break
@@ -230,7 +234,7 @@ def Normalize(my_data):
             # 0    1   2    3   4    5   6    7
             # 賣徵_地點_狀況_品名_品名_價錢_其它_其它   8
             try:
-                if (not isPrice(item[4]) and len(item) > 5):
+                if not isPrice(item[4]) and len(item) > 5:
                     item[3] += " " + item[4]
                     others_index = 6
                     for i in range(5, len(item)):
@@ -241,7 +245,7 @@ def Normalize(my_data):
                             break
                         else:
                             item[3] += " " + item[i]
-                    item[5] = " ".join(item[others_index:len(item)])
+                    item[5] = " ".join(item[others_index : len(item)])
                     for i in range(len(item) - others_index):
                         item.pop(-1)
             except:
@@ -270,14 +274,12 @@ def Normalize(my_data):
                 # 0    1   2    3   4    5
                 # 賣徵_地點_狀況_品名_品名_其它     6
                 if not isPrice(_dict["price"]):
-                    _dict["price"], _dict["others"] = _dict["others"], _dict[
-                        "price"]
+                    _dict["price"], _dict["others"] = _dict["others"], _dict["price"]
             except:
-                ErrorMessage("swap price and others",
-                             normalize_data[str(index)])
+                ErrorMessage("swap price and others", normalize_data[str(index)])
 
             try:
-                k_list = ('k', 'K')
+                k_list = ("k", "K")
                 _dict["price"] = ReplaceK(_dict["price"], k_list)
             except:
                 ErrorMessage("ReplaceK", normalize_data[str(index)])
