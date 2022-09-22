@@ -153,7 +153,7 @@ def isSlicePrice(obj):
     pattern = re.compile(r"^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$")
     for i in index_keyword:
         _str = obj[:i]
-        if i != -1 and _str != "" and not pattern.match(_str):
+        if not pattern.match(_str) and str != "":
             return False
     return True
 
