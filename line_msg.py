@@ -23,12 +23,12 @@ def SendLineMessage(msg):
     os.system(query)
 
 
-def SendItemMessage(my_data, normalized_data):
+def SendItemMessage(my_data, normalized_data, board):
     for i in range(
         int(my_data["LAST_UPDATED_ID"]) + 1, int(normalized_data["LAST_UPDATED_ID"]) + 1
     ):
 
-        msg_list = ["Headphone #置底推文交易"]
+        msg_list = [f"{board['index']} #置底推文交易"]
 
         item = normalized_data[str(i)]
         if item["name"] == "":
@@ -49,9 +49,6 @@ def SendItemMessage(my_data, normalized_data):
         )
         msg_list.append(f'({item["datetime"]})')
 
-        # if item["user_id"] in GetIdBlacklist():
-        #     msg_list.insert(0, '---中壢人注意！---')
-
         msg = line_newline
         for m in msg_list:
             msg += urllib.parse.quote(m) + line_newline
@@ -60,16 +57,18 @@ def SendItemMessage(my_data, normalized_data):
         SendLineMessage(msg)
 
 
-def SendTitleMessage(my_data, new_data_id_list):
+def SendTitleMessage(my_data, new_data_id_list, board):
+    index = board["index"]
     for _id in new_data_id_list:
         item = my_data[_id]
 
+        msg_board = urllib.parse.quote(f"{index} #交易文")
         msg_title = urllib.parse.quote(item["title"])
         msg_url = urllib.parse.quote(item["url"])
         msg_date = urllib.parse.quote(item["date"])
-        msg = f"%0D%0A{msg_title} ({msg_date})%0D%0A{msg_url}"
+        msg = f"{line_newline}{msg_board}{line_newline}{msg_title} ({msg_date}){line_newline}{msg_url}"
 
         if item["user_id"] in GetIdBlacklist():
-            msg = f"%0D%0A%0D%0A{urllib.parse.quote('中壢人注意！！！')}{msg}"
+            msg = f"{urllib.parse.quote('中壢人注意！')}{msg}"
 
         SendLineMessage(msg)
