@@ -49,38 +49,38 @@ def GetTitleData(url, old_data):
         try:
             title_string = title[index].find("a").string
             title_href = title[index].find("a")["href"]
-            if "[交易]" in title_string or "贈送" in title_string:
-                try:
-                    if "[交易]" in title_string:
-                        title_index = title_string.index("[交易]") + 4
-                        _title = title_string[title_index:].strip()
-                    else:
-                        _title = title_string.strip()
-                except:
-                    pass
-                try:
-                    input_date = date[index].string.strip().split("/")
-                    _title_date = datetime.datetime(
-                        year=datetime.date.today().year,
-                        month=int(input_date[0]),
-                        day=int(input_date[1]),
-                    )
-                    title_date = _title_date.strftime("%Y-%m-%d")
-                except:
-                    print(f"date: {date} error")
-                try:
-                    _id = title_href.strip().split("/")[-1].replace(".html", "")
-                    if not old_data.get(_id):
-                        new_data.append(_id)
-                        dict_data[_id] = {
-                            "title": _title,
-                            "url": "https://www.ptt.cc" + title_href,
-                            "user_id": author[index].string,
-                            "date": title_date,
-                            "origin": title_string,
-                        }
-                except:
-                    print(f"id: {_id} error")
+            try:
+                type_index = title_string.index("[") + 1
+                title_index = title_string.index("]")
+                _type = title_string[type_index:title_index]
+                if _type in ("交易", "情報", "贈送"):
+                    _title = title_string[title_index + 1:].strip()
+                    try:
+                        input_date = date[index].string.strip().split("/")
+                        _title_date = datetime.datetime(
+                            year=datetime.date.today().year,
+                            month=int(input_date[0]),
+                            day=int(input_date[1]),
+                        )
+                        title_date = _title_date.strftime("%Y-%m-%d")
+                    except:
+                        print(f"date: {date} error")
+                    try:
+                        _id = title_href.strip().split("/")[-1].replace(".html", "")
+                        if not old_data.get(_id):
+                            new_data.append(_id)
+                            dict_data[_id] = {
+                                "type": _type,
+                                "title": _title,
+                                "url": "https://www.ptt.cc" + title_href,
+                                "user_id": author[index].string,
+                                "date": title_date,
+                                "origin": title_string,
+                            }
+                    except:
+                        print(f"id: {_id} error")
+            except:
+                pass
         except:
             pass
 

@@ -63,7 +63,7 @@ def SendTitleMessage(my_data, new_data_id_list, board):
     for _id in new_data_id_list:
         item = my_data[_id]
 
-        msg_board = urllib.parse.quote(f"{index} #交易文")
+        msg_board = urllib.parse.quote(f"{index} #{item['type']}文")
         msg_title = urllib.parse.quote(item["title"])
         msg_url = urllib.parse.quote(item["url"])
         msg_date = urllib.parse.quote(item["date"])
