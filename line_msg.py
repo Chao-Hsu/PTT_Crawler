@@ -6,12 +6,6 @@ import json_io
 line_notify_token = ""
 line_notify_token_personal = ""
 
-# TODO:改成id變小的時候
-# now = tonow = datetime.datetime.now()
-# if (now.day == 1 and now.hour == 0 and now.minute < 5):
-#     msg = f"{str(now.month)}月置底推文交易"
-#     query = f'curl -H "Authorization: Bearer {line_notify_token}" -d "message=%0D%0A%0D%0A{msg}" https://notify-api.line.me/api/notify'
-
 line_newline = "%0D%0A"
 
 

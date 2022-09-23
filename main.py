@@ -2,17 +2,19 @@ import crawler
 import line_msg
 import json_io
 import sys
-import datetime
+from datetime import datetime
 
 url_title = "https://www.ptt.cc/bbs/Headphone/index.html"
 url_push = "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
 
+version = "test"
+line_msg.line_notify_token_personal = token["test"]
 crawler.isPrintError = False
 
 
 def main(argv):
-    if datetime.datetime.now().hour >= 8 or datetime.datetime.now().hour < 3:
-        version = "test"
+    now = datetime.now()
+    if now.hour >= 8 or now.hour < 3:
         if len(argv) > 1:
             if "--prod" in argv:
                 version = "prod"
@@ -20,7 +22,6 @@ def main(argv):
                 crawler.DoSomeDelay()
 
         token = json_io.ReadJson("Line_Token")
-        line_msg.line_notify_token_personal = token["test"]
         line_msg.line_notify_token = token[version]
 
         # title
@@ -41,15 +42,13 @@ def main(argv):
 
         line_msg.SendItemMessage(my_push_data, normalized_push_data)
 
-        json_io.WtiteJson(normalized_push_data, "data_push")
+        # if now.day == 1 and now.hour == 0 and now.minute == 0:
+        if normalized_push_data["LAST_UPDATED_ID"] < my_push_data["LAST_UPDATED_ID"]:
+            json_io.WtiteJson(
+                my_push_data, f"Headphone/Push/{datetime.strftime(now,'%Y%m')}"
+            )
 
-        # TODO:檢查ID變小
-        # if id變小:
-        #     query=f''
-        #     os.system(query)
-        #     json_io.WtiteJson(my_data,"年+上個月")
-        # else:
-        #     json_io.WtiteJson(crawl_data,"data.json")
+        json_io.WtiteJson(normalized_push_data, "data_push")
 
 
 if __name__ == "__main__":
