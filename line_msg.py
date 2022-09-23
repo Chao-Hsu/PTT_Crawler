@@ -46,7 +46,7 @@ def SendItemMessage(my_data, normalized_data, board):
             if item["others"] != "":
                 msg_list.append(f'[備註] {item["others"]}')
         msg_list.append(
-            f'[ID] {item["user_id"]+(" <--中壢人注意！" if item["user_id"] in GetIdBlacklist() else "")}'
+            f'[ID] {item["user_id"]+(" <--中壢人！" if item["user_id"] in GetIdBlacklist() else "")}'
         )
         msg_list.append(f'({item["datetime"]})')
 
@@ -70,6 +70,6 @@ def SendTitleMessage(my_data, new_data_id_list, board):
         msg = f"{line_newline}{msg_board}{line_newline}{msg_title} ({msg_date}){line_newline}{msg_url}"
 
         if item["user_id"] in GetIdBlacklist():
-            msg = f"{urllib.parse.quote('中壢人注意！')}{msg}"
+            msg = f"{urllib.parse.quote('中壢人！')}{msg}"
 
         SendLineMessage(msg)
