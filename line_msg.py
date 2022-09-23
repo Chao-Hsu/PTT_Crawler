@@ -7,6 +7,7 @@ line_notify_token = ""
 line_notify_token_personal = ""
 
 line_newline = "%0D%0A"
+ptt_url = "https://www.ptt.cc/bbs"
 
 
 def GetIdBlacklist():
@@ -52,7 +53,7 @@ def SendItemMessage(my_data, normalized_data, board):
         msg = line_newline
         for m in msg_list:
             msg += urllib.parse.quote(m) + line_newline
-        msg += "https://www.ptt.cc/bbs/Headphone/M.1530392323.A.695.html"
+        msg += "/".join((ptt_url, board["index"], board["push"]))
 
         SendLineMessage(msg)
 

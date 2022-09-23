@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 crawler.isPrintError = False
 ptt_url = "https://www.ptt.cc/bbs"
 list_board = {
@@ -26,7 +27,7 @@ def CrawlTitleAndNotify(board):
     )
     checked_title_data = crawler.CheckData(my_title_data, crawl_title_data)
 
-    line_msg.SendTitleMessage(checked_title_data, new_data_id_list)
+    line_msg.SendTitleMessage(checked_title_data, new_data_id_list, board)
 
     json_io.WtiteJson(checked_title_data, index)
 
@@ -39,7 +40,7 @@ def CrawlPushAndNotify(board):
     index = "_".join((board["index"], "push"))
     my_push_data = json_io.ReadJson(index)
 
-    line_msg.SendItemMessage(my_push_data, normalized_push_data)
+    line_msg.SendItemMessage(my_push_data, normalized_push_data, board)
 
     # if now.day == 1 and now.hour == 0 and now.minute == 0:
     if normalized_push_data["LAST_UPDATED_ID"] < my_push_data["LAST_UPDATED_ID"]:
