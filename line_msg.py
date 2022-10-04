@@ -24,6 +24,11 @@ def SendLineMessage(msg):
     os.system(query)
 
 
+def SendNewMonthMessage(board, m):
+    new_month_msg = urllib.parse.quote(f"{board['index']} {m}月置底推文交易")
+    SendLineMessage(new_month_msg)
+
+
 def SendItemMessage(my_data, normalized_data, board):
     for i in range(
         int(my_data["LAST_UPDATED_ID"]) + 1, int(normalized_data["LAST_UPDATED_ID"]) + 1
