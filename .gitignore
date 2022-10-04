@@ -1,3 +1,4 @@
-*.json
 __pycache__/*.pyc
 _test.py
+json/Line_Token.json
+json/keywords.json
