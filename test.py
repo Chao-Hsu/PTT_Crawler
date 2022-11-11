@@ -41,7 +41,10 @@ def CrawlPushAndNotify(board):
     my_push_data = json_io.ReadJson(index)
 
     # if now.day == 1 and now.hour == 0 and now.minute == 0:
-    if normalized_push_data["LAST_UPDATED_ID"] < my_push_data["LAST_UPDATED_ID"]:
+    if (
+        normalized_push_data["LAST_UPDATED_ID"] < my_push_data["LAST_UPDATED_ID"]
+        and len(normalized_push_data) > 0
+    ):
         last_month = datetime.now() + relativedelta(months=-1)
         json_io.WtiteJson(
             my_push_data,
