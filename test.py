@@ -51,7 +51,7 @@ def CrawlPushAndNotify(board):
             "/".join((board["index"], "Push", datetime.strftime(last_month, "%Y%m"))),
         )
 
-        line_msg.SendNewMonthMessage(board, datetime.strftime(datetime.now(), "%m"))
+        # line_msg.SendNewMonthMessage(board, datetime.strftime(datetime.now(), "%m"))
 
     json_io.WtiteJson(normalized_push_data, index)
 
